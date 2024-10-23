@@ -6,10 +6,8 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Component
 public class QuestListener {
@@ -24,10 +22,9 @@ public class QuestListener {
     @RabbitListener(queues = "questRequestQueue")
     public List<Quest> handleDailyQuestsRequest(String message) {
         System.out.println("Received request for daily quests: " + message);
-        List<Quest> quests = questRepository.findAll();
-        Collections.shuffle(quests);
-        return quests.stream().limit(3).collect(Collectors.toList());
+        return questRepository.findRandomDailyQuest();
     }
+
 
     @RabbitListener(queues = "questByIdQueue")
     public Quest handleQuestByIdRequest(Long id) {
@@ -39,6 +36,6 @@ public class QuestListener {
     @RabbitListener(queues = "questRandomQueue")
     public Quest handleRandomQuestRequest(String message) {
         System.out.println("Received request for random quest: " + message);
-        return new Quest(999L, "Random Quest");
+        return questRepository.findRandomQuest();
     }
 }
