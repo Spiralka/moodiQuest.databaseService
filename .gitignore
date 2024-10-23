@@ -35,3 +35,6 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### Spring profiles configs ###
+src/main/resources/application-dev.properties

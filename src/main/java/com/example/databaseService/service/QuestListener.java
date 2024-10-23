@@ -1,32 +1,44 @@
 package com.example.databaseService.service;
 
+import com.example.databaseService.repository.QuestRepository;
 import com.example.questModel.Quest;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Component
 public class QuestListener {
 
+    private final QuestRepository questRepository;
+
+    @Autowired
+    public QuestListener(QuestRepository questRepository) {
+        this.questRepository = questRepository;
+    }
+
     @RabbitListener(queues = "questRequestQueue")
     public List<Quest> handleDailyQuestsRequest(String message) {
         System.out.println("Received request for daily quests: " + message);
-        // Здесь вы можете вернуть список квестов из базы данных
-        return List.of(new Quest(1L, "Daily Quest 1"), new Quest(2L, "Daily Quest 2"), new Quest(3L, "Daily Quest 3"));
+        List<Quest> quests = questRepository.findAll();
+        Collections.shuffle(quests);
+        return quests.stream().limit(3).collect(Collectors.toList());
     }
 
     @RabbitListener(queues = "questByIdQueue")
     public Quest handleQuestByIdRequest(Long id) {
         System.out.println("Received request for quest by id: " + id);
-        // Здесь вы можете вернуть квест по ID из базы данных
-        return new Quest(id, "Quest with ID " + id);
+        Optional<Quest> quests = questRepository.findById(id);
+        return quests.orElse(null);
     }
 
     @RabbitListener(queues = "questRandomQueue")
     public Quest handleRandomQuestRequest(String message) {
         System.out.println("Received request for random quest: " + message);
-        // Здесь вы можете вернуть случайный квест из базы данных
         return new Quest(999L, "Random Quest");
     }
 }

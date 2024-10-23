@@ -1,37 +1,34 @@
 package com.example.questModel;
 
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.io.Serializable;
 
+@Data
+@Entity
+@NoArgsConstructor
+@AllArgsConstructor
+@Table(name = "quests")
 public class Quest implements Serializable {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "quest_id")
     private long id;
+
+    @Column(name = "short_name")
     private String shortName;
+
+    @Column(name = "description")
     private String description;
-    private int progressNumber;
 
-    public Quest(long l, String s) {}
+    @Column(name = "progress_count")
+    private Integer progressNumber;
 
-    public Quest(long id, String shortName, String description, int progressNumber) {
-        this.id = id;
-        this.shortName = shortName;
-        this.description = description;
-        this.progressNumber = progressNumber;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public String getShortName() {
-        return shortName;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public int getProgressNumber() {
-        return progressNumber;
+    public Quest(long l, String s) {
     }
 
 }
