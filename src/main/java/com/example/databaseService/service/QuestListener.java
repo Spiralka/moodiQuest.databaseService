@@ -25,7 +25,6 @@ public class QuestListener {
         return questRepository.findRandomDailyQuest();
     }
 
-
     @RabbitListener(queues = "questByIdQueue")
     public Quest handleQuestByIdRequest(Long id) {
         System.out.println("Received request for quest by id: " + id);
