@@ -19,6 +19,9 @@ public class RabbitConfig {
     public static final String QUEUE_DAILY_QUESTS = "questRequestQueue";
     public static final String QUEUE_QUEST_BY_ID = "questByIdQueue";
     public static final String QUEUE_RANDOM_QUEST = "questRandomQueue";
+    public static final String QUEUE_ADD_QUEST = "questAddQueue";
+    public static final String QUEUE_UPDATE_QUEST = "questUpdateQueue";
+    public static final String QUEUE_DELETE_QUEST = "questDeleteQueue";
 
     public static final String NOSQL_QUEUE_SAVE_QUEST = "saveQuestNoSqlQueue";
     public static final String NOSQL_QUEUE_GET_ALL_QUEST = "getAllQuestNoSqlQueue";
@@ -27,6 +30,9 @@ public class RabbitConfig {
     public static final String ROUTING_KEY_DAILY_QUESTS = "dailyQuests";
     public static final String ROUTING_KEY_QUEST_BY_ID = "questById";
     public static final String ROUTING_KEY_RANDOM_QUEST = "randomQuest";
+    public static final String ROUTING_KEY_ADD_QUEST = "addQuest";
+    public static final String ROUTING_KEY_UPDATE_QUEST = "updateQuest";
+    public static final String ROUTING_KEY_DELETE_QUEST = "deleteQuest";
 
     public static final String NOSQL_ROUTING_KEY_SAVE_QUEST = "saveQuestNoSqlQueue";
     public static final String NOSQL_ROUTING_KEY_GET_ALL_QUEST = "getAllQuestNoSqlQueue";
@@ -56,6 +62,21 @@ public class RabbitConfig {
     @Bean
     public Queue getAllQuestNoSqlQueue() {
         return new Queue(NOSQL_QUEUE_GET_ALL_QUEST);
+    }
+
+    @Bean
+    public Queue addQuest(){
+        return new Queue(QUEUE_ADD_QUEST);
+    }
+
+    @Bean
+    public Queue updateQuest(){
+        return new Queue(QUEUE_UPDATE_QUEST);
+    }
+
+    @Bean
+    public Queue deleteQuest(){
+        return new Queue(QUEUE_DELETE_QUEST);
     }
 
     // Обменник
@@ -93,6 +114,21 @@ public class RabbitConfig {
     @Bean
     public Binding bindingGetAllQuestNoSql() {
         return BindingBuilder.bind(getAllQuestNoSqlQueue()).to(noSqlExchange()).with(NOSQL_ROUTING_KEY_GET_ALL_QUEST);
+    }
+
+    @Bean
+    public Binding bindingAddQuest() {
+        return BindingBuilder.bind(addQuest()).to(questExchange()).with(ROUTING_KEY_ADD_QUEST);
+    }
+
+    @Bean
+    public Binding bindingUpdateQuest() {
+        return BindingBuilder.bind(updateQuest()).to(questExchange()).with(ROUTING_KEY_UPDATE_QUEST);
+    }
+
+    @Bean
+    public Binding bindingDeleteQuest() {
+        return BindingBuilder.bind(deleteQuest()).to(questExchange()).with(ROUTING_KEY_DELETE_QUEST);
     }
 
     @Bean

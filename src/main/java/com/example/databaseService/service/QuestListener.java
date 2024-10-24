@@ -37,4 +37,46 @@ public class QuestListener {
         System.out.println("Received request for random quest: " + message);
         return questRepository.findRandomQuest();
     }
+
+    @RabbitListener(queues = "questAddQueue")
+    public Quest addQuest(Quest quest) {
+        System.out.println("Received request for add quest: " + quest);
+        return questRepository.save(quest);
+    }
+
+    @RabbitListener(queues = "questUpdateQueue")
+    public String updateQuest(Quest quest) {
+        Optional<Quest> existingQuest = questRepository.findById(quest.getId());
+
+        if (existingQuest.isPresent()) {
+            Quest questToUpdate = existingQuest.get();
+            questToUpdate.setShortName(quest.getShortName());
+            questToUpdate.setDescription(quest.getDescription());
+            questToUpdate.setProgressNumber(quest.getProgressNumber());
+
+            questRepository.save(questToUpdate);
+            return "Quest updated successfully";
+        } else {
+            System.out.println("Quest with id " + quest.getId() + " not found.");
+            return "Quest not found";
+        }
+    }
+
+
+    @RabbitListener(queues = "questDeleteQueue")
+    public String deleteQuest(Long id) {
+        System.out.println("Received request for delete quest with id: " + id);
+        Optional<Quest> existingQuest = questRepository.findById(id);
+
+        if (existingQuest.isPresent()) {
+            questRepository.deleteById(id);
+            System.out.println("Quest with id " + id + " has been deleted.");
+            return "Quest deleted successfully";
+        } else {
+            System.out.println("Quest with id " + id + " not found.");
+            return "Quest not found";
+        }
+    }
+
+
 }
